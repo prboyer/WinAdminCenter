@@ -1,20 +1,20 @@
 function Import-WACConnections {
-    # param (
-    #     [Parameter(Mandatory=$true)]
-    #     [String]
-    #     $Gateway,
-    #     [Parameter(Mandatory=$true)]
-    #     [ValidateScript({
-    #         # Check that a path to a CSV file was passed
-    #         if([IO.Path]::getExtension($_) -eq "csv"){
-    #             $true
-    #         }else{
-    #             $false
-    #         }
-    #     })]
-    #     [String]
-    #     $FilePath
-    # )
+    param (
+        [Parameter(Mandatory=$true)]
+        [String]
+        $Gateway,
+        [Parameter(Mandatory=$true)]
+        [ValidateScript({
+            # Check that a path to a CSV file was passed
+            if([IO.Path]::getExtension($_) -eq ".csv"){
+                $true
+            }else{
+                $false
+            }
+        })]
+        [String]
+        $FilePath
+    )
     #Requires -Module ActiveDirectory
 
     $Gateway = "EST"
@@ -138,7 +138,6 @@ function Import-WACConnections {
 
     <# Write Log to File #>
         Write-Information $("`t{0} ******** Finished Logging *******`n" -f $(Get-Date -Format "G")) -InformationVariable +INFO
-        $INFO | Out-File -FilePath "$(Split-Path $FilePath -Parent)\$(Get-Date -F "s").log" -Force
-
+#TODO Figure out how to write log to file
 }
-Import-WACConnections
+Import-WACConnections -Gateway "https://winadmin.ads.ssc.wisc.edu:6516" -FilePath C:\Users\Public\Documents\WAC\connections.csv
