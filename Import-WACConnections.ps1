@@ -138,4 +138,4 @@ function Import-WACConnections {
         Write-Information $("`t{0} ******** Finished Logging *******`n" -f $(Get-Date -Format "G")) -InformationVariable +INFO
         $INFO | Out-File -FilePath  $($(Split-Path $FilePath -Parent)+"\"+$(Get-Date -Format FileDateTime)+".txt") -Force
 }
-Import-WACConnections -Gateway "https://winadmin.ads.ssc.wisc.edu:6516" -FilePath C:\Users\Public\Documents\WAC\connections.csv
+Import-WACConnections -Gateway "http://localhost:6516" -FilePath C:\Users\Public\Documents\WAC\connections.csv
