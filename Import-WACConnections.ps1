@@ -1,4 +1,24 @@
 function Import-WACConnections {
+    <#
+    .SYNOPSIS
+    Script for importing Computers and Servers into Windows Admin Center
+    
+    .DESCRIPTION
+    The script parses through Active Directory and tags each device with the appropriate tag based on the device's OU membership
+    
+    .PARAMETER Gateway
+    URL of the Windows Admin Center gateway
+    
+    .PARAMETER FilePath
+    FilePath to the CSV file that has the properly formatted discovered connections
+    
+    .EXAMPLE
+    Import-WACConnections -Gateway "http://localhost:8080" -FilePath "C:\Temp\Connections.csv"
+    
+    .NOTES
+        Author: Paul Boyer
+        Date: 4-23-21
+    #>
     param (
         [Parameter(Mandatory=$true)]
         [String]
