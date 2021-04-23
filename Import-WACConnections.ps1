@@ -17,8 +17,6 @@ function Import-WACConnections {
     )
     #Requires -Module ActiveDirectory
 
-    $Gateway = "EST"
-
     # Import required modules
         Import-Module $PSScriptRoot\Modules\ConnectionTools\ConnectionTools.psm1
 
@@ -134,10 +132,10 @@ function Import-WACConnections {
 
     <# Import connections into WAC from the generated CSV file #>
         Write-Information $("`n`t{0} Importing CSV file {1} to WAC ({2})" -f $(Get-Date -Format "G"),$FilePath,$Gateway) -InformationVariable +INFO
-        Import-Connection -Prune -GatewayEndpoint $Gateway -FileName $FilePath -ErrorAction SilentlyContinue -ErrorVariable +INFO
+        Import-Connection -Prune -GatewayEndpoint $Gateway -FileName $FilePath -ErrorAction SilentlyContinue -ErrorVariable +INFO -InformationVariable +INFO
 
     <# Write Log to File #>
         Write-Information $("`t{0} ******** Finished Logging *******`n" -f $(Get-Date -Format "G")) -InformationVariable +INFO
-#TODO Figure out how to write log to file
+        $INFO | Out-File -FilePath  $($(Split-Path $FilePath -Parent)+"\"+$(Get-Date -Format FileDateTime)+".txt") -Force
 }
 Import-WACConnections -Gateway "https://winadmin.ads.ssc.wisc.edu:6516" -FilePath C:\Users\Public\Documents\WAC\connections.csv
