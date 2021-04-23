@@ -46,5 +46,25 @@ function Import-WACConnections {
         )
 
     <# Private Function to parse computer/server objects and tag appropriately #>
-    
+    function private:Parse-Tags{
+        param(
+            [Parameter(Mandatory = $true)]
+            [String[]]
+            $Tags
+        )
+
+        [String]$return = "";
+       
+        # Iterate through the [String[]]$Tags and return with a pipe delimiter
+        for ($n = 0; $n -lt $Tags.Count; $n ++){
+            if($n -eq $Tags.Count -1){
+                $return += $Tags[$n]
+            }
+            else{
+                $return += $Tags[$n]+"|";
+            }
+        }
+        
+        return $return;
+    }
 }
