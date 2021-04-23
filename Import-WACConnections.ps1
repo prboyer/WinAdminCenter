@@ -46,6 +46,9 @@ function Import-WACConnections {
         [String[]]$Server_SearchBaseList = @(
             "OU=Servers,OU=Service,DC=ads,DC=ssc,DC=wisc,DC=edu"
         )
+
+    Write-Information $("`t{0} ******** Begin Logging *******`n" -f $(Get-Date -Format "G")) -InformationVariable +INFO
+
     <# Discover Computers to import into WAC #>
         Write-Information $("{0}`tBegin importing Computers into Windows Admin Center ({1})`n" -f $(Get-Date -Format "G"),$Gateway.ToUpper()) -InformationVariable +INFO
 
@@ -59,7 +62,7 @@ function Import-WACConnections {
         foreach($s in $Computer_SearchBaseList){
             Get-ADComputer -Filter * -SearchBase $s | ForEach-Object{
                 # Clear tagging for each iteration through the loop. Then add back in necessary tags
-                [String[]]$Tags = "";
+                [String[]]$private:Tags = "";
                 $Tags += $Computer_Tags;
 
                 # For each computer, evaluate what search base it falls into and then apply additional tags as appropriate
@@ -83,7 +86,47 @@ function Import-WACConnections {
                     Write-Information $("`n{0}`tDiscovered PC {1}" -f $(Get-Date -Format "G"),$Computers[$_].name) -InformationVariable +INFO
                 }
             }
+            # Add an empty line for spacing/formatting
+            Write-Information "`n" -InformationVariable +INFO
         }
+    <# Discover Servers to import into WAC #>
+        Write-Information $("`n{0}`tBegin importing Servers into Windows Admin Center ({1})`n" -f $(Get-Date -Format "G"),$Gateway.ToUpper()) -InformationVariable +INFO
+
+        # Tags to apply to all imported servers
+        [String[]]$Server_Tags = "SSCC","Windows Server"
+
+        # Array list to hold all Server objects
+        [System.Collections.ArrayList]$Servers = @();
+
+        foreach($s in $Server_SearchBaseList){
+            Get-ADComputer -Filter * -SearchBase $s | ForEach-Object {
+    
+                # Clear tagging for each iteration through the loop. Then add back in necessary tags
+                [String[]]$private:Tags = "";
+                $Tags += $Server_Tags;
+    
+                switch -Wildcard ($_.DistinguishedName) {
+                    "CN=*,OU=RDS,OU=2016,OU=Servers,OU=Service,DC=ads,DC=ssc,DC=wisc,DC=edu" {$Tags += "Winstat"}
+                    "CN=*,OU=SILO,OU=2016,OU=Servers,OU=Service,DC=ads,DC=ssc,DC=wisc,DC=edu" {$Tags += "Silo"}
+                    "CN=*,OU=SILO,OU=Service,DC=ads,DC=ssc,DC=wisc,DC=edu" {$Tags += "Silo"}
+                    "CN=*,OU=2016,OU=Servers,OU=Service,DC=ads,DC=ssc,DC=wisc,DC=edu" {$Tags += "Server 2016"}
+                    Default {}
+                }
+    
+                #Add computers to an array list as custom objects
+                $Servers.Add(
+                    [PSCustomObject]@{
+                        name = $_.DNSHostname
+                        type = $WIN_SERVER
+                        tags = $($Tags -join '|');
+                        groupId = "global"
+                    } 
+                ) | ForEach-Object {
+                    Write-Information $("`n{0}`tDiscovered Server {1}" -f $(Get-Date -Format "G"),$Servers[$_].name) -InformationVariable +INFO
+                }
+            }
+        }
+    
 
 }
 Import-WACConnections
