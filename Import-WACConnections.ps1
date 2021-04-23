@@ -127,6 +127,12 @@ function Import-WACConnections {
             }
         }
     
+    <# Generate a CSV file for importing into WAC #>
+        # Write the connections to a CSV file
+        Write-Information $("`n`t{0} Generating a CSV file and saving to {1}" -f $(Get-Date -Format "G"),$FilePath) -InformationVariable +INFO
+        $($Computers+$Servers)| Sort-Object -Property Name | Where-Object {$null -ne $_.Name} | Export-Csv -Path $FilePath -Force -NoTypeInformation
 
+    <# Import connections into WAC from the generated CSV file #>
+    
 }
 Import-WACConnections
