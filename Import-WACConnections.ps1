@@ -133,6 +133,12 @@ function Import-WACConnections {
         $($Computers+$Servers)| Sort-Object -Property Name | Where-Object {$null -ne $_.Name} | Export-Csv -Path $FilePath -Force -NoTypeInformation
 
     <# Import connections into WAC from the generated CSV file #>
-    
+        Write-Information $("`n`t{0} Importing CSV file {1} to WAC ({2})" -f $(Get-Date -Format "G"),$FilePath,$Gateway) -InformationVariable +INFO
+        Import-Connection -Prune -GatewayEndpoint $Gateway -FileName $FilePath -ErrorAction SilentlyContinue -ErrorVariable +INFO
+
+    <# Write Log to File #>
+        Write-Information $("`t{0} ******** Finished Logging *******`n" -f $(Get-Date -Format "G")) -InformationVariable +INFO
+        $INFO | Out-File -FilePath "$(Split-Path $FilePath -Parent)\$(Get-Date -F "s").log" -Force
+
 }
 Import-WACConnections
