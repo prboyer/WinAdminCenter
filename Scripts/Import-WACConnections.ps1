@@ -157,5 +157,8 @@ function Import-WACConnections {
     <# Write Log to File #>
         Write-Information $("`t{0} ******** Finished Logging *******`n" -f $(Get-Date -Format "G")) -InformationVariable +INFO
         $INFO | Out-File -FilePath  $($(Split-Path $FilePath -Parent)+"\"+$(Get-Date -Format FileDateTime)+".txt") -Force
+
+    <# Cleanup old Logs by deleting logs older than the past 7 days #>
+        Start-Process -FilePath cmd.exe -ArgumentList "/c forfiles /P $(Split-Path $FilePath -Parent) /M *.txt /D -7 /C `"cmd.exe /c del @file /q`""
 }
 Import-WACConnections -Gateway "http://localhost:6516" -FilePath C:\Users\Public\Documents\WAC\connections.csv
