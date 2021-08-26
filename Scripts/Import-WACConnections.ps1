@@ -38,7 +38,7 @@ function Import-WACConnections {
     #Requires -Module ActiveDirectory
 
     # Import required modules
-        Import-Module $PSScriptRoot\Modules\ConnectionTools\ConnectionTools.psm1
+        Import-Module "$env:ProgramFiles\Windows Admin Center\PowerShell\Modules\ConnectionTools\ConnectionTools.psm1"
 
     <# CONSTANTS #>
         # Constant string type for windows 10 PCs
