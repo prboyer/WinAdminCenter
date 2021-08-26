@@ -80,7 +80,7 @@ function Import-WACConnections {
         foreach($s in $Computer_SearchBaseList){
             Get-ADComputer -Filter * -SearchBase $s | ForEach-Object{
                 # Clear tagging for each iteration through the loop. Then add back in necessary tags
-                [String[]]$private:Tags = "";
+                [String[]]$private:Tags = $null;
                 $Tags += $Computer_Tags;
 
                 # For each computer, evaluate what search base it falls into and then apply additional tags as appropriate
@@ -120,7 +120,7 @@ function Import-WACConnections {
             Get-ADComputer -Filter * -SearchBase $s | ForEach-Object {
     
                 # Clear tagging for each iteration through the loop. Then add back in necessary tags
-                [String[]]$private:Tags = "";
+                [String[]]$private:Tags = $null;
                 $Tags += $Server_Tags;
     
                 switch -Wildcard ($_.DistinguishedName) {
