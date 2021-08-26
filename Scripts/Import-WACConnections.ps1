@@ -161,4 +161,4 @@ function Import-WACConnections {
     <# Cleanup old Logs by deleting logs older than the past 7 days #>
         Start-Process -FilePath cmd.exe -ArgumentList "/c forfiles /P $(Split-Path $FilePath -Parent) /M *.txt /D -7 /C `"cmd.exe /c del @file /q`""
 }
-Import-WACConnections -Gateway "http://localhost:6516" -FilePath C:\Users\Public\Documents\WAC\connections.csv
+Import-WACConnections -Gateway "https://localhost:6516" -FilePath C:\Users\Public\Documents\WAC\connections.csv
