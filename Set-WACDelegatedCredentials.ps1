@@ -21,33 +21,66 @@ function Set-WACDelegatedCredentials {
     #>
     param (
         [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [String]
-        $Gateway
+        $Gateway,
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $LogPath
     )
-    #Requires -Module  ActiveDirectory
+    # Commented the Requires statement out so that dynamic checking can be performed below
+    <# #Requires -Module  ActiveDirectory #>
 
     <# Variables #>
-        # Windows Admin Center gateway represented as an AD Object
-        [Microsoft.ActiveDirectory.Management.ADComputer]$WAC = Get-ADComputer -Identity $Gateway;
+            # Windows Admin Center gateway represented as an AD Object
+            [Microsoft.ActiveDirectory.Management.ADComputer]$WAC = Get-ADComputer -Identity $Gateway;
 
-        # Variable to store Error information
-        [String]$ERROR
+            # Variable to store Error information
+            [String]$E = "";
 
-    try{
-        # Set Delegation access on current machine
-        Get-ADComputer -Identity $env:COMPUTERNAME | Set-ADComputer -PrincipalsAllowedToDelegateToAccount $WAC -Verbose
+            # Error Flag to determine if the install completed sucessfully. 1=error, 0=no errors
+            [Int]$ErrorFlag = 2;
 
-        # Clear the KDC Cache
-        Start-Process "cmd.exe" -ArgumentList "/c klist purge -li 0x3e7" -Wait -NoNewWindow 
+    # Determine if the ActiveDirectory module is installed and available for import
+        if("ActiveDirectory" -iin [String[]]@((Get-Module -ListAvailable | Select-Object Name).Name)){
+            try{
+                Import-Module ActiveDirectory
+            }
+            catch{
+                Write-Error "Unable to Import ActiveDirectory Module" -ErrorAction Stop -ErrorVariable +E
+            }
+        }else{
+                Add-WindowsCapability -Name "Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0" -Online -Verbose -ErrorAction Stop -ErrorVariable +E
+                Import-Module ActiveDirectory
+        }
 
-    }catch{
-        Write-Error $ERROR -ErrorVariable +ERROR
-    }
+        try{
+            # Set Delegation access on current machine
+            Get-ADComputer -Identity $env:COMPUTERNAME | Set-ADComputer -PrincipalsAllowedToDelegateToAccount $WAC -Verbose -ErrorAction Stop -ErrorVariable +E
 
-    # Create registry key to confirm installaton
-    New-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE"-Name "SSCC" -ItemType key -ErrorAction SilentlyContinue
-    New-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\SSCC" -Name "WAC" -ItemType key -ErrorAction SilentlyContinue
-    New-ItemProperty -Name "Installed" -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\SSCC\WAC" -Value $errorFlag -PropertyType String -Force
+            # Clear the KDC Cache
+            Start-Process "cmd.exe" -ArgumentList "/c klist purge -li 0x3e7" -Wait -NoNewWindow -ErrorAction Continue -ErrorVariable +E
+            
+            # Set the error flag
+            $ErrorFlag = 0;
+
+        }catch{
+            $ErrorFlag = 1;
+            Write-Error $ERROR -ErrorVariable +E
+        }
+
+        # Create registry key to confirm installaton
+        New-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE"-Name "SSCC" -ItemType key -ErrorAction SilentlyContinue -ErrorVariable +E
+        New-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\SSCC" -Name "WAC" -ItemType key -ErrorAction SilentlyContinue -ErrorVariable +E
+        New-ItemProperty -Name "Installed" -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\SSCC\WAC" -Value $ErrorFlag -PropertyType DWord -Force -ErrorAction Stop -ErrorVariable +E
+
+        # Handle the error log output. Only write an error log if errors are logged to $E
+        if ($E -ne "") {
+            if ($LogPath -ne "") {
+                $E | Out-File -FilePath $LogPath -Force
+            }else{
+                $E | Out-File -FilePath $PSScriptRoot\WAC_DelegatedCredsErrorLog.txt -Force
+            }
+        }        
 }
-
-Set-WACDelegatedCredentials -Gateway "Winadmin"
