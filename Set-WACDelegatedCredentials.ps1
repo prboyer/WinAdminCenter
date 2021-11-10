@@ -72,7 +72,8 @@ function Set-WACDelegatedCredentials {
 
         # Create registry key to confirm installaton
         New-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE"-Name "SSCC" -ItemType key -ErrorAction SilentlyContinue -ErrorVariable +E
-        New-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\SSCC" -Name "WAC" -ItemType key -ErrorAction SilentlyContinue -ErrorVariable +E
+        New-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\SSCC\" -Name "WAC" -ItemType key -ErrorAction SilentlyContinue -ErrorVariable +E
+        New-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\SSCC\WAC" -Name "DelegatedCreds" -ItemType key -ErrorAction SilentlyContinue -ErrorVariable +E
         New-ItemProperty -Name "Installed" -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\SSCC\WAC" -Value $ErrorFlag -PropertyType DWord -Force -ErrorAction Stop -ErrorVariable +E
 
         # Handle the error log output. Only write an error log if errors are logged to $E
