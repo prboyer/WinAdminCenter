@@ -95,5 +95,17 @@
             "CSVPath":"",
             "DaysToRetainCSV":-7
         }
+    },
+    "DelegatedCredentials":{
+        "Gateway":"",
+        "Registry":{
+            "Hive":"HKEY_LOCAL_MACHINE",
+            "Path":"SOFTWARE\\Microsoft\\Windows Admin Center",
+            "Key":"DelegatedCredentials",
+            "PropertyName":"Installed"
+        },
+        "Logs":{
+            "LogPath":""
+        }
     }
 }
