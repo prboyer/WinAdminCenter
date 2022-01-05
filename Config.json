@@ -1,0 +1,99 @@
+{
+    "Extensions": {
+        "Gateway":"",
+        "Extensions": [
+            "Active Directory",
+            "Apps & features",
+            "Azure Backup",
+            "Azure Cloud Shell (Preview)",
+            "Azure Extended Network",
+            "Azure File Sync",
+            "Azure hybrid center",
+            "Azure Kubernetes Service",
+            "Azure Security Center",
+            "Certificates",
+            "Cluster Creation",
+            "Cluster Manager",
+            "Configuration Manager Client (Preview)",
+            "Containers",
+            "Dell EMC OpenManage Integration",
+            "Dell EMC PowerPath",
+            "Developer Guide",
+            "Devices",
+            "DHCP (Preview)",
+            "DNS (Preview)",
+            "Events",
+            "Failover cluster tools",
+            "Files & file sharing",
+            "Firewall",
+            "GPUs",
+            "Local users & groups",
+            "msft.iis.iis-management",
+            "Network Controller tools and SDN Virtual networks",
+            "Networks",
+            "Packet monitoring",
+            "Performance Monitor",
+            "PowerShell",
+            "Processes",
+            "Registry",
+            "Remote Desktop",
+            "Roles & features",
+            "Scheduled tasks",
+            "SDN Access control lists",
+            "SDN Gateway connections",
+            "SDN Infrastructure",
+            "SDN Load balancers (Preview)",
+            "SDN Logical networks (Preview)",
+            "SDN Logical networks",
+            "SDN Public IP Addresses (Preview)",
+            "SDN Route tables (Preview)",
+            "Security (Preview)",
+            "Security",
+            "Services",
+            "Storage Migration Service",
+            "Storage Replica",
+            "Storage",
+            "System Insights",
+            "Thomas-Krenn.AG | Driver & Firmware Updates",
+            "Thomas-Krenn.AG | S2D Micro-Cluster",
+            "Updates",
+            "Virtual machines and switches",
+            "Windows Server Storage Migration Service",
+            "Windows Server System Insights"
+        ],
+        "Logs":{
+            "LogPath":"",
+            "DaysToRetainLogs":-7
+        }
+    },
+    "Connections":{
+        "Gateway":"https://localhost:443",
+        "Computers":{
+            "SearchBases":[
+                {
+                    "SearchBase":"",
+                    "Tags":[]
+                }
+            
+            ],
+            "DefaultTags":["Windows 10"]
+        },
+        "Servers":{
+            "SearchBases":[
+                {
+                    "SearchBase":"",
+                    "Tags":[]
+                }
+            ],
+            "DefaultTags":["Windows Server"]
+        },
+        "Logs":{
+            "LogPath":"",
+            "DaysToRetainLogs":-7
+        },
+        "CSV":{
+            "CSVPath":"",
+            "DaysToRetainCSV":-7
+        }
+    }
+}
