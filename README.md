@@ -5,6 +5,8 @@ Download Help Link: https://github.com/prboyer/WinAdminCenter
 Help Version: 1.0
 Locale: en-US
 ---
+[![PSScriptAnalyzer](https://github.com/prboyer/PSVault/actions/workflows/powershell-analysis.yml/badge.svg?branch=prboyer-patch-1)](https://github.com/prboyer/PSVault/actions/workflows/powershell-analysis.yml)
+
 # WinAdminCenter Module
 ## Description
 PowerShell scipts to automate functions in Windows Admin Center
