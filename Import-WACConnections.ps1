@@ -45,21 +45,7 @@ function Import-WACConnections {
         Date: 01-05-2022
     #>
     param (
-        [Parameter(Mandatory=$true, ParameterSetName="CommandLine")]
-        [Parameter(Mandatory=$false, ParameterSetName="ConfigFile")]
-        [String]
-        $GatewayURL,
-        [Parameter(Mandatory=$true, ParameterSetName="CommandLine")]
-        [Parameter(Mandatory=$false, ParameterSetName="ConfigFile")]
-        [String]
-        $CSVPath,
-        [Parameter(Mandatory=$false, ParameterSetName="CommandLine")]
-        [Parameter(Mandatory=$false, ParameterSetName="ConfigFile")]
-        [String]
-        $LogPath,
         [Parameter(Mandatory=$true, ParameterSetName="ConfigFile")]
-        [Parameter(Mandatory=$true, ParameterSetName="CustomMatching")]
-        [Parameter(Mandatory=$true, ParameterSetName="CommandLine")]
         [ValidateScript({
             # Check that a path to a JSON file was passed
             if([IO.Path]::getExtension($_) -eq ".json"){
@@ -70,15 +56,22 @@ function Import-WACConnections {
         })]
         [String]
         $ConfigFile,
+        [Parameter()]
+        [String]
+        $GatewayURL,
+        [Parameter()]
+        [String]
+        $CSVPath,
+        [Parameter()]
+        [String]
+        $LogPath,
         [Parameter(Mandatory=$false, ParameterSetName="CustomMatching")]
         [Switch]
         $ComputersCustomMatching,
         [Parameter(Mandatory=$false, ParameterSetName="CustomMatching")]
         [Switch]
         $ServersCustomMatching,
-        [Parameter(Mandatory=$false, ParameterSetName="ConfigFile")]
-        [Parameter(Mandatory=$false, ParameterSetName="CustomMatching")]
-        [Parameter(Mandatory=$false, ParameterSetName="CommandLine")]
+        [Parameter()]
         [Switch]
         $Quiet
 

@@ -1,16 +1,15 @@
 ---
 Module Name: WinAdminCenter
-Module Guid: 59e65a61-edfe-4a14-b887-ca777d6b2e17
-Download Help Link: https://github.com/prboyer/WinAdminCenter
-Help Version: 1.0
+Module Guid: 662031b9-31d7-465f-98ce-4d27574d0c6a
+Download Help Link: https://github.com/prboyer/PSVault
+Help Version: 1.1
 Locale: en-US
 ---
-[![PSScriptAnalyzer](https://github.com/prboyer/PSVault/actions/workflows/powershell-analysis.yml/badge.svg?branch=prboyer-patch-1)](https://github.com/prboyer/PSVault/actions/workflows/powershell-analysis.yml)
-
+![PSScriptAnalyzer](https://github.com/prboyer/PSVault/actions/workflows/powershell-analysis.yml/badge.svg?branch=prboyer-patch-1)
 # WinAdminCenter Module
 ## Description
-PowerShell scipts to automate functions in Windows Admin Center
-## Downloads-WinAdminCenter Cmdlets
+PowerShell scripts for automating functions in Windows Admin Center
+## WinAdminCenter Cmdlets
 ### [Enable-WACExtensions](Docs/Enable-WACExtensions.md)
 A PowerShell Script to automate the installation and updating of extensions in Windows Admin Center.
 ### [Import-WACConnections](Docs/Import-WACConnections.md)

@@ -1,7 +1,7 @@
 ---
 Author: Paul Boyer
 external help file: WinAdminCenter-help.xml
-Module Guid: 59e65a61-edfe-4a14-b887-ca777d6b2e17
+Module Guid: 662031b9-31d7-465f-98ce-4d27574d0c6a
 Module Name: WinAdminCenter
 online version:
 schema: 2.0.0
@@ -16,18 +16,14 @@ Script for importing Computers and Servers into Windows Admin Center
 
 ### ConfigFile
 ```
-Import-WACConnections [-GatewayURL <String>] [-CSVPath <String>] -ConfigFile <String> [-Quiet]
- [<CommonParameters>]
-```
-
-### CommandLine
-```
-Import-WACConnections -GatewayURL <String> -CSVPath <String> [-LogPath <String>] [-Quiet] [<CommonParameters>]
+Import-WACConnections -ConfigFile <String> [-GatewayURL <String>] [-CSVPath <String>] [-LogPath <String>]
+ [-Quiet] [<CommonParameters>]
 ```
 
 ### CustomMatching
 ```
-Import-WACConnections [-ComputersCustomMatching] [-ServersCustomMatching] [-Quiet] [<CommonParameters>]
+Import-WACConnections [-GatewayURL <String>] [-CSVPath <String>] [-LogPath <String>] [-ComputersCustomMatching]
+ [-ServersCustomMatching] [-Quiet] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -54,28 +50,32 @@ The script will use all values from the configuration file.
 
 ## PARAMETERS
 
-### -GatewayURL
-An override parameter for the gateway URL.
-If not specified, the script will attempt to determine the gateway URL from the configuration file.
+### -ConfigFile
+Path to the JSON configuration file.
+If not specified, the script will fail to continue execution.
 
 ```yaml
 Type: String
 Parameter Sets: ConfigFile
 Aliases:
 
-Required: False
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -GatewayURL
+An override parameter for the gateway URL.
+If not specified, the script will attempt to determine the gateway URL from the configuration file.
+
 ```yaml
 Type: String
-Parameter Sets: CommandLine
+Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -88,22 +88,10 @@ If not specified, the script will attempt to determine the location from the con
 
 ```yaml
 Type: String
-Parameter Sets: ConfigFile
+Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-```yaml
-Type: String
-Parameter Sets: CommandLine
-Aliases:
-
-Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -116,26 +104,10 @@ If not specified, the script will attempt to determine the location from the con
 
 ```yaml
 Type: String
-Parameter Sets: CommandLine
+Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ConfigFile
-Path to the JSON configuration file.
-If not specified, the script will fail to continue execution.
-
-```yaml
-Type: String
-Parameter Sets: ConfigFile
-Aliases:
-
-Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -199,7 +171,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## NOTES
 Author: Paul Boyer
-Date: 4-23-21
+Date: 01-05-2022
 
 ## RELATED LINKS
 
