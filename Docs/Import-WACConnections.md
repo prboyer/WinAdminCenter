@@ -1,7 +1,7 @@
 ---
 Author: Paul Boyer
 external help file: WinAdminCenter-help.xml
-Module Guid: 662031b9-31d7-465f-98ce-4d27574d0c6a
+Module Guid: 6dc6040e-ae10-41f4-ad1e-c8d1e7ad6e78
 Module Name: WinAdminCenter
 online version:
 schema: 2.0.0
@@ -14,16 +14,9 @@ Script for importing Computers and Servers into Windows Admin Center
 
 ## SYNTAX
 
-### ConfigFile
 ```
 Import-WACConnections -ConfigFile <String> [-GatewayURL <String>] [-CSVPath <String>] [-LogPath <String>]
- [-Quiet] [<CommonParameters>]
-```
-
-### CustomMatching
-```
-Import-WACConnections [-GatewayURL <String>] [-CSVPath <String>] [-LogPath <String>] [-ComputersCustomMatching]
- [-ServersCustomMatching] [-Quiet] [<CommonParameters>]
+ [-ComputersCustomMatching] [-ServersCustomMatching] [-Quiet] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -56,7 +49,7 @@ If not specified, the script will fail to continue execution.
 
 ```yaml
 Type: String
-Parameter Sets: ConfigFile
+Parameter Sets: (All)
 Aliases:
 
 Required: True
@@ -120,7 +113,7 @@ It will not use the tags defined in the JSON file and will instead rely on the t
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: CustomMatching
+Parameter Sets: (All)
 Aliases:
 
 Required: False
@@ -136,7 +129,7 @@ It will not use the tags defined in the JSON file and will instead rely on the t
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: CustomMatching
+Parameter Sets: (All)
 Aliases:
 
 Required: False

@@ -1,8 +1,8 @@
 ---
 Module Name: WinAdminCenter
-Module Guid: 662031b9-31d7-465f-98ce-4d27574d0c6a
-Download Help Link: https://github.com/prboyer/PSVault
-Help Version: 1.1
+Module Guid: 6dc6040e-ae10-41f4-ad1e-c8d1e7ad6e78
+Download Help Link: https://github.com/prboyer/WinAdminCenter
+Help Version: 1.2
 Locale: en-US
 ---
 ![PSScriptAnalyzer](https://github.com/prboyer/PSVault/actions/workflows/powershell-analysis.yml/badge.svg?branch=prboyer-patch-1)

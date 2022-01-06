@@ -45,7 +45,7 @@ function Import-WACConnections {
         Date: 01-05-2022
     #>
     param (
-        [Parameter(Mandatory=$true, ParameterSetName="ConfigFile")]
+        [Parameter(Mandatory=$true)]
         [ValidateScript({
             # Check that a path to a JSON file was passed
             if([IO.Path]::getExtension($_) -eq ".json"){
