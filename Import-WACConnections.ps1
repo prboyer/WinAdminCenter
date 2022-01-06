@@ -6,7 +6,7 @@ function Import-WACConnections {
     .DESCRIPTION
     The script will import computers and servers into Windows Admin Center as global connections that all users can utilize. It reads in settings from a JSON configuration file, and then generates a CSV file that can be imported into WAC.
     
-    .PARAMETER Gateway
+    .PARAMETER GatewayURL
     An override parameter for the gateway URL. If not specified, the script will attempt to determine the gateway URL from the configuration file.
     
     .PARAMETER CSVPath
@@ -28,7 +28,7 @@ function Import-WACConnections {
     A switch parameter that sets the InformationPreference to SilentlyContinue. This will limit the standard output of the script.
     
     .EXAMPLE
-    Import-WACConnections -Gateway "http://localhost:8080" -CSVPath "C:\Temp\Connections.csv" -ConfigFile "C:\Temp\Config.json"
+    Import-WACConnections -GatewayURL "http://localhost:8080" -CSVPath "C:\Temp\Connections.csv" -ConfigFile "C:\Temp\Config.json"
 
     In this example, the script will ignore the gateway URL from the configuration file, and instead use the one specified by the -Gateway parameter. Similarly, the CSV file will be saved to the C:\Temp directory, rather than the location specified in the configuration file. Other parameters in the configuration file will be applied.
 
@@ -42,21 +42,24 @@ function Import-WACConnections {
 
     .NOTES
         Author: Paul Boyer
-        Date: 4-23-21
+        Date: 01-05-2022
     #>
     param (
         [Parameter(Mandatory=$true, ParameterSetName="CommandLine")]
         [Parameter(Mandatory=$false, ParameterSetName="ConfigFile")]
         [String]
-        $Gateway,
+        $GatewayURL,
         [Parameter(Mandatory=$true, ParameterSetName="CommandLine")]
         [Parameter(Mandatory=$false, ParameterSetName="ConfigFile")]
         [String]
         $CSVPath,
         [Parameter(Mandatory=$false, ParameterSetName="CommandLine")]
+        [Parameter(Mandatory=$false, ParameterSetName="ConfigFile")]
         [String]
         $LogPath,
         [Parameter(Mandatory=$true, ParameterSetName="ConfigFile")]
+        [Parameter(Mandatory=$true, ParameterSetName="CustomMatching")]
+        [Parameter(Mandatory=$true, ParameterSetName="CommandLine")]
         [ValidateScript({
             # Check that a path to a JSON file was passed
             if([IO.Path]::getExtension($_) -eq ".json"){
@@ -73,14 +76,16 @@ function Import-WACConnections {
         [Parameter(Mandatory=$false, ParameterSetName="CustomMatching")]
         [Switch]
         $ServersCustomMatching,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$false, ParameterSetName="ConfigFile")]
+        [Parameter(Mandatory=$false, ParameterSetName="CustomMatching")]
+        [Parameter(Mandatory=$false, ParameterSetName="CommandLine")]
         [Switch]
         $Quiet
 
     )
     #Requires -Module ActiveDirectory
     
-    # Set script verbosity
+    # Set script verbosity by setting the $InformationPreference variable
     if($Quiet){
         $InformationPreference = "SilentlyContinue"
     }else{
@@ -106,20 +111,20 @@ function Import-WACConnections {
 
         # Constant for storing the Gateway URL
         [String]$GATEWAY;
-        if($Null -eq $Gateway -or $Gateway -eq ""){
+        if($GatewayURL -eq ""){
             $GATEWAY = $CONFIG.Connections.Gateway
         }else{
-            $GATEWAY = $Gateway
+            $GATEWAY = $GatewayURL
         }
 
         # Variable to hold log information
         [String]$INFO
 
-    <# Variables #>
-        # Computer Configuration #
+    <# AD DS SearchBases #>
+        # Computer Configuration
         [String[]]$Computer_SearchBaseList = $CONFIG.Connections.Computers.SearchBases.SearchBase
 
-        # Server Configuration #
+        # Server Configuration
         [String[]]$Server_SearchBaseList = $CONFIG.Connections.Servers.SearchBases.SearchBase
 
     Write-Information $("{0} ******** Begin Logging *******" -f $(Get-Date -Format "G")) -InformationVariable +INFO
@@ -135,23 +140,23 @@ function Import-WACConnections {
 
         # Parse through the SearchBase list for computer objects
         foreach($s in $Computer_SearchBaseList){
-            Get-ADComputer -Filter * -SearchBase $s | ForEach-Object{
+            Get-ADComputer -Filter * -Properties DistinguishedName,CanonicalName -SearchBase $s | ForEach-Object{
                 # Clear tagging for each iteration through the loop. Then add back in necessary tags
                 [String[]]$private:Tags = $null;
 
                 # Apply the default computer tags
                 $Tags += $Computer_Tags;
 
-                if(-not $ComputersCustomMatching){
-                    # Apply the tags correlated to the SearchBase
-                    $Tags += ($CONFIG.Connections.Computers.SearchBases | Where-Object{$_.SearchBase -eq $s}).Tags;
-                }else{
+                if($ComputersCustomMatching){
                     <# CUSTOM MATCHING FOR COMPUTER OBJECTS #>
                     <# Enter custom matching logic in this section #>
                     
 
 
                     <# End of custom matching section. Do not modify code outside this section.#>
+                }else{
+                    # Apply the tags correlated to the SearchBase
+                    $Tags += ($CONFIG.Connections.Computers.SearchBases | Where-Object{$_.SearchBase -eq $s}).Tags;
                 }
 
                 #Add computers to an array list as custom objects
@@ -167,6 +172,7 @@ function Import-WACConnections {
                 }
             }
         }
+
     <# Discover Servers to import into WAC #>
         Write-Information $("{0}`tBegin importing Servers into Windows Admin Center ({1})" -f $(Get-Date -Format "G"),$GATEWAY.ToUpper()) -InformationVariable +INFO
 
@@ -177,7 +183,7 @@ function Import-WACConnections {
         [System.Collections.ArrayList]$Servers = @();
 
         foreach($s in $Server_SearchBaseList){
-            Get-ADComputer -Filter * -SearchBase $s | ForEach-Object {
+            Get-ADComputer -Filter * -Properties DistinguishedName -SearchBase $s | ForEach-Object {
     
                 # Clear tagging for each iteration through the loop. Then add back in necessary tags
                 [String[]]$private:Tags = $null;
@@ -195,6 +201,9 @@ function Import-WACConnections {
 
 
                     <# End of custom matching section. Do not modify code outside this section.#>
+                }else{
+                    # Apply the tags correlated to the SearchBase
+                    $Tags += ($CONFIG.Connections.Servers.SearchBases | Where-Object{$_.SearchBase -eq $s}).Tags;
                 }
 
                 #Add computers to an array list as custom objects
@@ -212,14 +221,16 @@ function Import-WACConnections {
         }
     
     <# Generate a CSV file for importing into WAC #>
-        # Resolve the $CSVPath location
-        if ($null -eq $CSVPath -or $CSVPath -eq ""){
-            $CSVPath = $CONFIG.Connections.Computers.CSVFilePath
+        # Resolve the $CSVPath location. Check if a path was passed at runtime or if the path in the configuration file should be used.
+        if ($CSVPath -eq ""){
+            $CSVPath = $CONFIG.Connections.CSV.CSVPath
         }
     
-        # Write the connections to a CSV file
-        Write-Information $("{0}`tGenerating a CSV file and saving to {1}" -f $(Get-Date -Format "G"),$CSVPath) -InformationVariable +INFO
+        # Determine the CSV file name through string addition.
         [String]$CSVFileName = "$CSVPath\WindowsAdminCenter_DeviceDiscovery_$(Get-Date -Format FileDateTime).csv"
+
+        # Write the connections to a CSV file
+        Write-Information $("{0}`tGenerating a CSV file and saving to {1}" -f $(Get-Date -Format "G"),$CSVFileName) -InformationVariable +INFO
         $($Computers+$Servers)| Sort-Object -Property Name | Where-Object {$null -ne $_.Name} | Export-Csv -Path $CSVFileName -Force -NoTypeInformation
 
     <# Import connections into WAC from the generated CSV file #>
@@ -227,13 +238,19 @@ function Import-WACConnections {
         Import-Connection -Prune -GatewayEndpoint $GATEWAY -FileName $CSVFileName -ErrorAction SilentlyContinue -ErrorVariable +INFO -InformationVariable +INFO
 
     <# Write Log to File #>
-        # Determine where to write the log file
-        if ($null -eq $LogPath -or $LogPath -eq ""){
+        # Determine where to write the log file. Check if a path was passed at runtime or if the path in the configuration file should be used.
+        if ($LogPath -eq ""){
             $LogPath = $CONFIG.Connections.Logs.LogPath
         }
-        Write-Information $("{0}`tWriting Log file to {1}" -f $(Get-Date -Format "G"),$($(Split-Path $LogPath -Parent)+"\"+$(Get-Date -Format FileDateTime)+".txt")) -InformationVariable +INFO
+
+        # Determine the log file name through string addition.
+        [String]$LogFileName = "$LogPath\WindowsAdminCenter_DeviceDiscovery_$(Get-Date -Format FileDateTime).txt"
+
+        Write-Information $("{0}`tWriting Log file to {1}" -f $(Get-Date -Format "G"),$LogFileName) -InformationVariable +INFO
         Write-Information $("{0} ******** Finished Logging *******" -f $(Get-Date -Format "G")) -InformationVariable +INFO
-        $INFO | Out-File -FilePath  $($LogPath+"\"+$(Get-Date -Format FileDateTime)+".txt") -Force
+        
+        # Write the log file
+        $INFO | Out-File -FilePath $LogFileName -Force
 
     <# Cleanup old Logs by deleting logs older than the past N days #>
         Start-Process -FilePath cmd.exe -ArgumentList "/c forfiles /P $LogPath /M *.txt /D $([Int]$CONFIG.Connections.Logs.DaysToRetainLogs) /C `"cmd.exe /c del @file /q`""
