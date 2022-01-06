@@ -16,13 +16,13 @@ Script for importing Computers and Servers into Windows Admin Center
 
 ### ConfigFile
 ```
-Import-WACConnections [-Gateway <String>] [-CSVPath <String>] -ConfigFile <String> [-Quiet]
+Import-WACConnections [-GatewayURL <String>] [-CSVPath <String>] -ConfigFile <String> [-Quiet]
  [<CommonParameters>]
 ```
 
 ### CommandLine
 ```
-Import-WACConnections -Gateway <String> -CSVPath <String> [-LogPath <String>] [-Quiet] [<CommonParameters>]
+Import-WACConnections -GatewayURL <String> -CSVPath <String> [-LogPath <String>] [-Quiet] [<CommonParameters>]
 ```
 
 ### CustomMatching
@@ -38,7 +38,7 @@ It reads in settings from a JSON configuration file, and then generates a CSV fi
 
 ### EXAMPLE 1
 ```
-Import-WACConnections -Gateway "http://localhost:8080" -CSVPath "C:\Temp\Connections.csv" -ConfigFile "C:\Temp\Config.json"
+Import-WACConnections -GatewayURL "http://localhost:8080" -CSVPath "C:\Temp\Connections.csv" -ConfigFile "C:\Temp\Config.json"
 ```
 
 In this example, the script will ignore the gateway URL from the configuration file, and instead use the one specified by the -Gateway parameter.
@@ -54,7 +54,7 @@ The script will use all values from the configuration file.
 
 ## PARAMETERS
 
-### -Gateway
+### -GatewayURL
 An override parameter for the gateway URL.
 If not specified, the script will attempt to determine the gateway URL from the configuration file.
 
