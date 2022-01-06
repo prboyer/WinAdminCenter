@@ -107,5 +107,18 @@
         "Logs":{
             "LogPath":""
         }
+    },
+    "ScheduledTask":{
+        "Trigger":{
+            "ExtensionTime":"22:00",
+            "ConnectionTime":"22:00"
+        },
+        "Action":{
+            "ExtensionPath":"",
+            "ConnectionPath":""
+        },
+        "Principal":{
+            "UserID":""
+        }
     }
 }

@@ -1,7 +1,7 @@
 ---
 Author: Paul Boyer
 external help file: WinAdminCenter-help.xml
-Module Guid: 6dc6040e-ae10-41f4-ad1e-c8d1e7ad6e78
+Module Guid: e2aed9d2-2a17-4273-b9ab-909fc8bd5531
 Module Name: WinAdminCenter
 online version:
 schema: 2.0.0
